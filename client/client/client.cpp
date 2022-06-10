@@ -44,7 +44,11 @@ int main()
 
     int iConnect;
     iConnect = connect(clientSocket, (SOCKADDR*)&ServerAdd, sizeof(ServerAdd));
-    char buff[1024];
+
+
+    char* recvBuff = NULL;
+    DWORD bufferSize = 0;
+
     while (true)
     {
         int iSend;
@@ -54,16 +58,36 @@ int main()
 
         int iSenderBuffer = senBuff.length();
         iSend = send(clientSocket, senBuff.c_str(), iSenderBuffer, 0);
-
         int iRecv;
-        iRecv = recv(clientSocket, buff, sizeof(buff), 0);
+        iRecv = recv(clientSocket, (char*)&bufferSize, sizeof(bufferSize), 0);
+        cout << bufferSize << endl;
+        recvBuff = (char*)calloc(bufferSize, sizeof(char));
+        iRecv = recv(clientSocket, recvBuff, bufferSize , 0);
         if (iRecv > 0)
         {
-            buff[iRecv] = '\0';
-            cout << buff << endl;
+            recvBuff[iRecv] = '\0';
+            cout << recvBuff << endl;
         }
 
         else if (iRecv < 0)
             break;
     }
+    
+   /* while (true)
+    {
+       
+
+        int iRecv;
+        iRecv = recv(clientSocket, (char*)&bufferSize, sizeof(bufferSize), 0);
+        recvBuff = (char*)calloc(bufferSize + 1, sizeof(char));
+        iRecv = recv(clientSocket, recvBuff, sizeof(recvBuff), 0);
+        if (iRecv > 0)
+        {
+            recvBuff[iRecv] = '\0';
+            cout << recvBuff << endl;
+        }
+
+        else if (iRecv < 0)
+            break;
+    }*/
 }
