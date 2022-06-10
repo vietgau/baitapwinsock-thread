@@ -73,7 +73,7 @@ DWORD WINAPI serve(LPVOID serverSocket) {
         DWORD iThread;
         CreateThread(NULL, 0, cmd, (LPVOID)clientSocket, 0, &iThread);
     }
-    
+
     ExitThread(0);
 }
 int main()
@@ -132,12 +132,8 @@ int main()
     }
     DWORD serveThread;
     HANDLE hServeThread;
-    while (1) {
-        hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
-    }
-    
-  
-    
-   
+    hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
+    WaitForSingleObject(hServeThread, INFINITE);
+
 }
 
