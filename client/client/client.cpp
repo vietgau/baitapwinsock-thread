@@ -60,7 +60,7 @@ int main()
         iSend = send(clientSocket, senBuff.c_str(), iSenderBuffer, 0);
         int iRecv;
         iRecv = recv(clientSocket, (char*)&bufferSize, sizeof(bufferSize), 0);
-        cout << bufferSize << endl;
+        //cout << bufferSize << endl;
         recvBuff = (char*)calloc(bufferSize, sizeof(char));
         iRecv = recv(clientSocket, recvBuff, bufferSize , 0);
         if (iRecv > 0)
