@@ -51,12 +51,13 @@ DWORD WINAPI cmd(LPVOID Socket) {
 
 
 DWORD WINAPI serve(LPVOID serverSocket) {
-    SOCKET clientSocket;
-    struct sockaddr_in clientAddr;
-    int iclientAddr = sizeof(clientAddr);
-    SOCKET ServerSocket = (SOCKET)serverSocket;
     while (true)
     {
+        SOCKET clientSocket;
+        struct sockaddr_in clientAddr;
+        int iclientAddr = sizeof(clientAddr);
+        SOCKET ServerSocket = (SOCKET)serverSocket;
+
         clientSocket = accept(ServerSocket, (sockaddr*)&clientAddr, &iclientAddr);
         if (clientSocket == INVALID_SOCKET) {
             return WSAGetLastError();
@@ -71,10 +72,9 @@ DWORD WINAPI serve(LPVOID serverSocket) {
         inet_ntop(AF_INET, &clientAddr.sin_addr, ip, INET_ADDRSTRLEN);
         cout << ip << "ket noi o port " << port << endl;
         DWORD iThread;
-        CreateThread(NULL, 0, cmd, (LPVOID)clientSocket, 0, &iThread);
+        HANDLE hThread;
+        hThread = CreateThread(NULL, 0, cmd, (LPVOID)clientSocket, 0, &iThread);
     }
-
-    ExitThread(0);
 }
 int main()
 {
@@ -130,10 +130,10 @@ int main()
     {
         cout << "lang nghe thanh cong " << endl;
     }
-    DWORD serveThread;
-    HANDLE hServeThread;
-    hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
-    WaitForSingleObject(hServeThread, INFINITE);
-
+    serve((LPVOID)serverSocket);
+    /*DWORD serveThread;
+     HANDLE hServeThread;
+     hServeThread = CreateThread(NULL, 0, serve, (LPVOID)serverSocket, 0, &serveThread);
+     WaitForSingleObject(hServeThread, INFINITE);*/  
 }
 
